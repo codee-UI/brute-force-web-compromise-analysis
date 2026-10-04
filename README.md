@@ -430,3 +430,148 @@ The domains, IP addresses, users, organization, and security incident described 
 ## Keywords
 
 `Cybersecurity` `Network Security` `tcpdump` `DNS` `TCP` `HTTP` `Brute Force Attack` `Web Server Compromise` `Malware` `JavaScript Injection` `Incident Response` `Packet Analysis` `MFA` `Authentication Security`
+
+
+
+
+
+# Security Incident Report — Brute-Force Web Compromise
+
+## Description
+
+Cybersecurity incident analysis of a compromised website involving a brute-force attack, malicious file delivery, HTTP traffic, DNS redirection, and account-security remediation.
+
+---
+
+## Section 1: Identify the Network Protocol Involved in the Incident
+
+The primary network protocol involved in the incident is **Hypertext Transfer Protocol (HTTP)**.
+
+The issue involved users accessing the web server for `yummyrecipesforme.com`, and the tcpdump traffic log shows HTTP being used when the browser contacts the website. The malicious file was delivered to users over **HTTP**, which operates at the **application layer** of the TCP/IP model.
+
+The traffic log also shows DNS requests before the HTTP connections. DNS was used to resolve the domain names `yummyrecipesforme.com` and later `greatrecipesforme.com` to IP addresses. However, the protocol directly associated with accessing the webpages and transferring the malicious content was **HTTP**.
+
+Example traffic:
+
+```text
+HTTP: GET / HTTP/1.1
+```
+
+---
+
+## Section 2: Document the Incident
+
+Several customers contacted the website helpdesk after visiting `yummyrecipesforme.com`. They reported being prompted to download and run a file that claimed to provide access to free recipes. After running the file, their computers began operating more slowly and their browsers were redirected to a different website. The website owner also attempted to log in to the administrative panel but discovered that access to the account had been lost.
+
+The cybersecurity analyst investigated the incident in a **sandbox environment** to avoid affecting the company network. The analyst opened `yummyrecipesforme.com`, ran **tcpdump** to capture the resulting network traffic, and reproduced the reported behavior. The website prompted the analyst to download an executable file presented as a browser update. After the file was downloaded and executed, the browser redirected to `greatrecipesforme.com`.
+
+The tcpdump traffic log showed that the browser first sent a DNS request to resolve `yummyrecipesforme.com`. The DNS server returned the website's IP address, and the browser established a connection to the site using HTTP. After the suspicious file was downloaded and executed, the network traffic changed. The browser sent another DNS request, this time for `greatrecipesforme.com`, and then established an HTTP connection with that website. This change in traffic supported the observation that the downloaded file redirected users away from the legitimate website.
+
+A senior cybersecurity analyst reviewed the website source code and the downloaded file. The investigation found that malicious JavaScript had been added to the website to prompt visitors to download the executable file. The downloaded file contained a script that redirected browsers to `greatrecipesforme.com`. The cybersecurity team determined that the web server had been compromised through a **brute-force attack** against the administrative account. The attack succeeded because the administrative password was still set to a known default password and there were no controls in place to limit repeated login attempts. After gaining access, the attacker changed the administrator password and modified the website source code.
+
+---
+
+## Section 3: Recommend One Remediation for Brute-Force Attacks
+
+A recommended security measure is to implement **two-factor authentication (2FA)** for administrative accounts.
+
+2FA requires a user to provide a password and an additional authentication factor, such as a one-time passcode. This means that even if an attacker successfully guesses or obtains an administrative password, the password alone would not be enough to gain access to the account.
+
+Implementing 2FA would make a password-only brute-force attack much less likely to result in successful administrative access.
+
+Additional supporting controls may include:
+
+- Replacing all default passwords before systems are placed into production
+- Limiting repeated login attempts
+- Monitoring failed authentication attempts
+- Preventing reuse of previous or default passwords
+- Requiring strong administrative passwords
+
+---
+
+## Incident Evidence Summary
+
+| Evidence | Observation |
+|---|---|
+| Legitimate domain | `yummyrecipesforme.com` |
+| Redirected domain | `greatrecipesforme.com` |
+| Primary web protocol | HTTP |
+| Name-resolution protocol | DNS |
+| Packet-analysis tool | tcpdump |
+| Initial attack | Brute-force attack |
+| Compromised account | Administrative account |
+| Security weakness | Default password and lack of brute-force controls |
+| Malicious modification | JavaScript added to website source |
+| User impact | Malicious file download, browser redirection, slower computers |
+| Recommended remediation | Two-factor authentication (2FA) |
+
+---
+
+## Traffic Sequence
+
+```text
+User visits yummyrecipesforme.com
+        |
+        v
+DNS request for yummyrecipesforme.com
+        |
+        v
+DNS response with legitimate IP address
+        |
+        v
+HTTP connection to legitimate website
+        |
+        v
+Malicious download prompt
+        |
+        v
+Executable file downloaded and run
+        |
+        v
+DNS request for greatrecipesforme.com
+        |
+        v
+DNS response with redirected destination
+        |
+        v
+HTTP connection to greatrecipesforme.com
+```
+
+---
+
+## Key Findings
+
+- HTTP was the primary protocol involved in accessing the website and transferring the malicious content.
+- DNS was used to resolve both the legitimate and redirected domain names.
+- The website source code had been modified with malicious JavaScript.
+- Customers were prompted to download and execute a malicious file.
+- The file redirected browsers from `yummyrecipesforme.com` to `greatrecipesforme.com`.
+- The administrative account was compromised through a brute-force attack.
+- The attack was successful because the administrative password was still set to a default value and repeated login attempts were not restricted.
+- Two-factor authentication is recommended as a key remediation.
+
+---
+
+## Repository Purpose
+
+This repository is part of a cybersecurity learning and professional portfolio. It demonstrates the ability to:
+
+- Analyze tcpdump traffic
+- Identify application-layer protocols
+- Document a security incident
+- Interpret DNS and HTTP traffic
+- Trace malicious redirection behavior
+- Identify a brute-force account compromise
+- Recommend an authentication security control
+
+---
+
+## Disclaimer
+
+This repository documents a simulated cybersecurity training scenario for educational and portfolio purposes.
+
+---
+
+## Suggested GitHub Topics
+
+`cybersecurity` `tcpdump` `http` `dns` `brute-force` `incident-response` `web-security` `packet-analysis` `2fa`
